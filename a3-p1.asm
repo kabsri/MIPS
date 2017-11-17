@@ -3,7 +3,8 @@
 
 .data
 initialPrompt:	.asciiz "Enter characters to add to list. Use * to terminate list\n"
-charPrompt:	.asciiz "\nEnter the next character\n"	 
+charPrompt:	.asciiz "\nEnter the next character\n"
+newLine:	.asciiz "\n" 
 
 .text
 #There are no real limit as to what you can use
@@ -15,6 +16,8 @@ charPrompt:	.asciiz "\nEnter the next character\n"
 
 main:
 	jal build
+	move $v0, $a0
+	jal print
 	
 	li $v0, 10
 	syscall
@@ -73,12 +76,26 @@ loop:
 	j loop
 
 tail:	
-	move $v0, $t2
+	move $v0, $t2		#save address of head to $v0 to return it
 	jr $ra
 
 print:
 #$a0 takes the address of the first node
 #prints the contents of each node in order
+	move $t0, $a0		#save address of current node to $t0
+	beq $t0, $0, end	#check if address is a null pointer
+	lb $a0, 4($t0)		#load the character we need to print to $a0
+	li $v0, 11
+	syscall			#print the character
+	la $a0, newLine		#load new line character to $a0
+	li $v0, 4
+	syscall			#print new line
+	la $a0 0($t0)		#store address of next node to $a0
+	j print
+	
+
+end:
+	jr $ra
 
 reverse:
 #$a1 takes the address of the first node of a linked list
