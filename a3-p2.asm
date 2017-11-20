@@ -53,30 +53,30 @@ A:
 	sw $a1, 8($sp)		#save n to stack
 	jal check		#call check preocdure to make sure the values are valid
 	
-	beq $a0, $zero, base
-	beq $a1, $zero, rec1
+	beq $a0, $zero, base	#base case if if m=0
+	beq $a1, $zero, rec	#simple recursive call is if n=0
 	
-	move $s0, $a0
-	move $s1, $a1
-	addi $a1, $a1, -1
-	jal A
-	addi $a0, $s0, -1
-	move $a1, $v0
-	jal A
+	move $s0, $a0		#remember m by saving it to $s0
+	move $s1, $a1		#remember n by saving it to $s1
+	addi $a1, $a1, -1	#decrease n by one
+	jal A			#call A(m,n-1)
+	addi $a0, $s0, -1	#decrease m by one
+	move $a1, $v0		#n is the result of the previous Ackermann call
+	jal A			#call A(m-1, A(m, n-1))
 
 base:	
-	addi $v0, $a1, 1
-	j pop
+	addi $v0, $a1, 1	#base case is just returning n+1
+	j pop			#start popping stack
 
-rec1:
-	addi $a0, $a0, -1
-	addi $a1, $zero, 1
-	jal A
+rec:
+	addi $a0, $a0, -1	#decrease m by one
+	addi $a1, $zero, 1	#set n to one
+	jal A			#simple recursive case is A(m-1, 1)
 pop:
-	lw $ra, 0($sp)		#save return address on top of stack
-	lw $s0, 4($sp)
-	lw $s1, 8($sp)
-	addi $sp, $sp, 12	#restore stack
+	lw $ra, 0($sp)		#load return address on stack to $ra
+	lw $s0, 4($sp)		#load m from stack to $s0 for previous recursive calls
+	lw $s1, 8($sp)		#load n from stack to $s1 for previous recursive calls
+	addi $sp, $sp, 12	#restore stack pointer
 	jr $ra
 	
 ###########################################################
