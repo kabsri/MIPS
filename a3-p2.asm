@@ -7,7 +7,6 @@
 error: 		.asciiz "error: m, n must be non-negative integers\n"
 prompt1:	.asciiz "Please enter a number\n"
 prompt2:	.asciiz "Please enter another number\n"
-newline:	.asciiz "\n"
 
 .text 
 ###########################################################
@@ -28,36 +27,31 @@ main:
 	move $s1, $v0		#save second number to $s1
 	
 # compute A on inputs
-	addi $sp, $sp, -4	#make space on stack for return address
-	sw $ra, 0($sp)		#save return address to stack
 	move $a0, $s0		#put first number in $a0
 	move $a1, $s1		#put second number in $a1
 	jal A			#call ackermann
 	
 # print value to console and exit with status 0
-	
 	move $a0, $v0		#save ackermann value to $a0
 	li $v0, 1		
 	syscall			#print ackermann value
 	
-	li $v0, 10
+	li $v0, 10		#exit program
 	syscall
 
 ###########################################################
 # int A(int m, int n)
 # computes Ackermann function
 A: 
-	addi $sp, $sp, -12	#make space on stack for return address, m, and n
+	addi $sp, $sp, -8	#make space on stack for return address and m
 	sw $ra, 0($sp)		#save return address to stack
 	sw $a0, 4($sp)		#save m to stack
-	sw $a1, 8($sp)		#save n to stack
 	jal check		#call check preocdure to make sure the values are valid
 	
-	beq $a0, $zero, base	#base case if if m=0
+	beq $a0, $zero, base	#base case is if m=0
 	beq $a1, $zero, rec	#simple recursive call is if n=0
 	
 	move $s0, $a0		#remember m by saving it to $s0
-	move $s1, $a1		#remember n by saving it to $s1
 	addi $a1, $a1, -1	#decrease n by one
 	jal A			#call A(m,n-1)
 	addi $a0, $s0, -1	#decrease m by one
@@ -75,8 +69,7 @@ rec:
 pop:
 	lw $ra, 0($sp)		#load return address on stack to $ra
 	lw $s0, 4($sp)		#load m from stack to $s0 for previous recursive calls
-	lw $s1, 8($sp)		#load n from stack to $s1 for previous recursive calls
-	addi $sp, $sp, 12	#restore stack pointer
+	addi $sp, $sp, 8	#restore stack pointer
 	jr $ra
 	
 ###########################################################
