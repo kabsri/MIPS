@@ -36,8 +36,9 @@ main:
 	li $v0, 1		
 	syscall			#print ackermann value
 	
-	li $v0, 10		#exit program
-	syscall
+	li $v0, 17		
+	li $a0, 0
+	syscall			#exit program with status 0
 
 ###########################################################
 # int A(int m, int n)
@@ -84,5 +85,6 @@ failure:
 	la $a0, error		#load error message to $a0
 	li $v0, 4		
 	syscall			#print error message
-	li $v0, 10
-	syscall			#exit program
+	li $v0, 17
+	li $a0, 1		
+	syscall			#exit program with  status 1

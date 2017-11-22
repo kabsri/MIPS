@@ -50,6 +50,8 @@ build:
 	li $a0, 8	#store 8 into $a0 to allocate 8 bytes to a node
 	li $v0, 9
 	syscall		#allocate 8 bytes to memory
+	lw $s0, 0($v0)
+	lw $s1, 4($v0)
 	move $t2, $v0	#store head of list in $t2 so we can return it later
 	
 	move $t1, $v0 		#store address of malloc to $t1
@@ -70,7 +72,7 @@ loop:
 	li $v0, 9
 	syscall		#allocate 8 bytes of memory
 	
-	la $v0, 0($t1)		#save location of current node in previous node
+	sw $v0, 0($t1)		#save location of current node in previous node
 	move $t1, $v0		#store pointer to current node to $t1
 	sw $t0, 4($t1)		#save character to second half of node
 	j loop
@@ -90,7 +92,7 @@ print:
 	la $a0, newLine		#load new line character to $a0
 	li $v0, 4
 	syscall			#print new line
-	la $a0 0($t0)		#store address of next node to $a0
+	lw $a0, 0($t0)		#store address of next node to $a0
 	j print
 	
 

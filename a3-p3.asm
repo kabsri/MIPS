@@ -1,5 +1,5 @@
-# Name:
-# Student ID: 
+# Name: Kabilan Sriranjan
+# Student ID: 260671847
 
 # Problem 3
 # Numerical Integration with the Floating Point Coprocessor
